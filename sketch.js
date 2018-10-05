@@ -24,9 +24,9 @@ function start() {
 // When the image has been loaded,
 // get a prediction for that image
 function imageReady() {
-  classifier.predict(img, gotResult);
+  
   // You can also specify the amount of classes you want
-  // classifier.predict(img, 10, gotResult);
+   classifier.predict(img, 10, gotResult);
 }
 
 // A function to run when we get the results
