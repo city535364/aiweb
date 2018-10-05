@@ -16,7 +16,7 @@ const classifier = ml5.imageClassifier('MobileNet', modelReady);
 let img;
 
 function setup() {
-  //noCanvas();
+  noCanvas();
   // Load the image
   img = createImg('images/bird.jpg', imageReady);
   img.size(400, 400);
