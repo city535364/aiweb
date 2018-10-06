@@ -16,9 +16,11 @@ const classifier = ml5.imageClassifier('MobileNet', modelReady);
 let img;
 
 function setup() {
-  //noCanvas();
+  noCanvas();
   // Load the image
-  img = createImg('images/bird.jpg', imageReady);
+  fn = decodeURI(getQueryString("file"));
+  url = "https://firebasestorage.googleapis.com/v0/b/fileupload-40884.appspot.com/o/" + fn + "?alt=media&token=decc6dbb-1ff8-4944-9b69-88465b65e92b"  
+  img = createImg(url, imageReady);
   img.size(400, 400);
 }
 
@@ -46,3 +48,18 @@ function gotResult(err, results) {
   select('#result').html(results[0].className);
   select('#probability').html(nf(results[0].probability, 0, 2));
 }
+
+function getQueryString(paramName) {
+            paramName = paramName.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]").toLowerCase();  
+            var reg = "[\\?&]" + paramName + "=([^&#]*)"; 
+            var regex = new RegExp(reg); 
+            var regResults = regex.exec(window.location.href.toLowerCase());            	
+            if (regResults == null) 
+    	        return ""; 
+             else 			
+                return regResults[1];
+}
+
+
+
+
