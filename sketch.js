@@ -18,8 +18,9 @@ let img;
 function setup() {
   noCanvas();
   // Load the image
-  fn = decodeURI(getQueryString("file"));
-  url = "https://firebasestorage.googleapis.com/v0/b/fileupload-40884.appspot.com/o/" + fn + "?alt=media&token=decc6dbb-1ff8-4944-9b69-88465b65e92b"  
+  //fn = decodeURI(getQueryString("file"));
+  //url = "https://firebasestorage.googleapis.com/v0/b/fileupload-40884.appspot.com/o/" + fn + "?alt=media&token=decc6dbb-1ff8-4944-9b69-88465b65e92b"  
+  url = "kitten.jpg"
   img = createImg(url, imageReady);
   img.size(400, 400);
 }
