@@ -4,59 +4,102 @@
 // https://opensource.org/licenses/MIT
 
 /* ===
-ml5 Example
-Image classification using MobileNet and p5.js
-This example uses a callback pattern to create the classifier
+ML5 Example
+Simple Image Classification Drag and Drop
 === */
 
-// Initialize the Image Classifier method with MobileNet. A callback needs to be passed.
-const classifier = ml5.imageClassifier('MobileNet', modelReady);
+const image = document.getElementById('image'); // The image we want to classify
+const dropContainer = document.getElementById('container');
+const warning = document.getElementById('warning');
+const fileInput = document.getElementById('fileUploader');
 
-// A variable to hold the image we want to classify
-let img;
+function preventDefaults(e) {
+  e.preventDefault()
+  e.stopPropagation()
+};
 
-function setup() {
-  noCanvas();
-  // Load the image
-  var value=decodeURI(getQueryString("file"));
-  //var value = window.AppInventor.getWebViewString(); 
-  //url = "https://firebasestorage.googleapis.com/v0/b/car-kthhjc.appspot.com/o/" + value + "?alt=media&token=f98a7fe6-a6d6-419a-8724-a2b5da6e68f3"
-  img = createImg(value, imageReady);
-  img.size(400, 400);
-}
-
-// Change the status when the model loads.
-function modelReady(){
-  select('#status').html('Model Loaded')
-  classifier.predict(img, gotResult);
-}
-
-// When the image has been loaded,
-// get a prediction for that image
-function imageReady() {
-  classifier.predict(img, gotResult);
-  // You can also specify the amount of classes you want
-  // classifier.predict(img, 10, gotResult);
-}
-
-// A function to run when we get any errors and the results
-function gotResult(err, results) {
-  // Display error in the console
-  if (err) {
-    console.error(err);
+function windowResized() {
+  let windowW = window.innerWidth;
+  if (windowW < 480 && windowW >= 200) {
+    image.style.maxWidth = windowW - 80;
+    dropContainer.style.display = 'block';
+  } else if (windowW < 200) {
+    dropContainer.style.display = 'none';
+  } else {
+    image.style.maxWidth = '90%';
+    dropContainer.style.display = 'block';
   }
-  // The results are in an array ordered by probability.
-  select('#result').html(results[0].className);
-  select('#probability').html(nf(results[0].probability, 0, 2));
 }
 
-function getQueryString(paramName) {
-            paramName = paramName.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]").toLowerCase();
-            var reg = "[\\?&]" + paramName + "=([^&#]*)";
-            var regex = new RegExp(reg);
-            var regResults = regex.exec(window.location.href.toLowerCase());
+['dragenter', 'dragover'].forEach(eventName => {
+  dropContainer.addEventListener(eventName, e => dropContainer.classList.add('highlight'), false)
+});
 
-            if (regResults == null) return "";
-            else return regResults[1];
-} 
+['dragleave', 'drop'].forEach(eventName => {
+  dropContainer.addEventListener(eventName, e => dropContainer.classList.remove('highlight'), false)
+});
 
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  dropContainer.addEventListener(eventName, preventDefaults, false)
+});
+
+dropContainer.addEventListener('drop', gotImage, false)
+
+function gotImage(e) {
+  const dt = e.dataTransfer;
+  const files = dt.files;
+  if (files.length > 1) {
+    console.error('upload only one file');
+  }
+  const file = files[0];
+  const imageType = /image.*/;
+  if (file.type.match(imageType)) {
+    warning.innerHTML = '';
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      image.src = reader.result;
+      setTimeout(classifyImage, 100);
+    }
+  } else {
+    image.src = 'images/bird.jpg';
+    setTimeout(classifyImage, 100);
+    warning.innerHTML = 'Please drop an image file.'
+  }
+}
+
+function handleFiles() {
+  const curFiles = fileInput.files;
+  if (curFiles.length === 0) {
+    image.src = 'images/bird.jpg';
+    setTimeout(classifyImage, 100);
+    warning.innerHTML = 'No image selected for upload';
+  } else {
+    image.src = window.URL.createObjectURL(curFiles[0]);
+    warning.innerHTML = '';
+    setTimeout(classifyImage, 100);
+  }
+}
+
+function clickUploader() {
+  fileInput.click();
+}
+
+const result = document.getElementById('result'); // The result tag in the HTML
+const probability = document.getElementById('probability'); // The probability tag in the HTML
+
+// Initialize the Image Classifier method
+const classifier = ml5.imageClassifier('Mobilenet', () => {});
+
+// Make a prediction with the selected image
+// This will return an array with a default of 10 options with their probabilities
+classifyImage();
+
+function classifyImage() {
+  classifier.predict(image, (err, results) => {
+    let resultTxt = results[0].className;
+    result.innerText = resultTxt;
+    let prob = 100 * results[0].probability;
+    probability.innerText = Number.parseFloat(prob).toFixed(2) + '%';
+  });
+}
