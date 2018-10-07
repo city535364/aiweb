@@ -33,8 +33,8 @@ function load_pic(){
   url = "https://firebasestorage.googleapis.com/v0/b/fileupload-40884.appspot.com/o/" + fn + "?alt=media&token=decc6dbb-1ff8-4944-9b69-88465b65e92b"  
   //url = "kitten.jpg"
   	
-  img.size(400, 400);
   img = createImg(url, imageReady);
+  img.size(400, 400);
 }
 
 // When the image has been loaded,
