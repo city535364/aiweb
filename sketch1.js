@@ -19,7 +19,8 @@ function setup() {
   noCanvas();
   // Load the image
   var url=decodeURI(getQueryString("file"));
-  //var value = window.AppInventor.getWebViewString(); 
+  //var value = window.AppInventor.getWebViewString();
+   url = "https://pgw.udn.com.tw/gw/photo.php?u=https://uc.udn.com.tw/photo/2017/11/06/99/4205106.jpg"  
   //url = "https://firebasestorage.googleapis.com/v0/b/fileupload-40884.appspot.com/o/" + url + "?alt=media&token=decc6dbb-1ff8-4944-9b69-88465b65e92b"
   img = createImg(url, imageReady);
   img.size(400, 400);
