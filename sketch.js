@@ -1,7 +1,3 @@
-
-
-
-
 // Copyright (c) 2018 ml5
 //
 // This software is released under the MIT License.
@@ -9,42 +5,58 @@
 
 /* ===
 ml5 Example
-Simple Image Classification using MobileNet
-This example uses promises to create the classifier
+Image classification using MobileNet and p5.js
+This example uses a callback pattern to create the classifier
 === */
 
-const image = document.getElementById('image'); // The image we want to classify
-const result = document.getElementById('result'); // The result tag in the HTML
-const probability = document.getElementById('probability'); // The probability tag in the HTML
-load_pic();
-// Initialize the Image Classifier method with MobileNet
-ml5.imageClassifier('MobileNet')
-  .then(classifier => classifier.predict(image))
-  .then(results => {
-    result.innerText = results[0].className;
-    probability.innerText = results[0].probability.toFixed(4);
-});
+// Initialize the Image Classifier method with MobileNet. A callback needs to be passed.
+const classifier = ml5.imageClassifier('MobileNet', modelReady);
 
-function load_pic(){
-  fn = decodeURI(getQueryString("file"));
-  url = fn
-  //url = "https://firebasestorage.googleapis.com/v0/b/fileupload-40884.appspot.com/o/" + fn + "?alt=media&token=decc6dbb-1ff8-4944-9b69-88465b65e92b"  
-  image.src = url;
+// A variable to hold the image we want to classify
+let img;
+
+function setup() {
+  noCanvas();
+  // Load the image
+  var value=decodeURI(getQueryString("file"));
+  //var value = window.AppInventor.getWebViewString(); 
+  //url = "https://firebasestorage.googleapis.com/v0/b/car-kthhjc.appspot.com/o/" + value + "?alt=media&token=f98a7fe6-a6d6-419a-8724-a2b5da6e68f3"
+  img = createImg(value, imageReady);
+  img.size(400, 400);
 }
 
+// Change the status when the model loads.
+function modelReady(){
+  select('#status').html('Model Loaded')
+  classifier.predict(img, gotResult);
+}
 
+// When the image has been loaded,
+// get a prediction for that image
+function imageReady() {
+  classifier.predict(img, gotResult);
+  // You can also specify the amount of classes you want
+  // classifier.predict(img, 10, gotResult);
+}
+
+// A function to run when we get any errors and the results
+function gotResult(err, results) {
+  // Display error in the console
+  if (err) {
+    console.error(err);
+  }
+  // The results are in an array ordered by probability.
+  select('#result').html(results[0].className);
+  select('#probability').html(nf(results[0].probability, 0, 2));
+}
 
 function getQueryString(paramName) {
-            paramName = paramName.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]").toLowerCase();  
-            var reg = "[\\?&]" + paramName + "=([^&#]*)"; 
-            var regex = new RegExp(reg); 
-            var regResults = regex.exec(window.location.href.toLowerCase());            	
-            if (regResults == null) 
-    	        return ""; 
-             else 			
-                return regResults[1];
-}
+            paramName = paramName.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]").toLowerCase();
+            var reg = "[\\?&]" + paramName + "=([^&#]*)";
+            var regex = new RegExp(reg);
+            var regResults = regex.exec(window.location.href.toLowerCase());
 
-
-
+            if (regResults == null) return "";
+            else return regResults[1];
+} 
 
