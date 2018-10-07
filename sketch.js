@@ -1,3 +1,7 @@
+
+
+
+
 // Copyright (c) 2018 ml5
 //
 // This software is released under the MIT License.
@@ -5,28 +9,21 @@
 
 /* ===
 ml5 Example
-Image classification using MobileNet and p5.js
-This example uses a callback pattern to create the classifier
+Simple Image Classification using MobileNet
+This example uses promises to create the classifier
 === */
 
-// Initialize the Image Classifier method with MobileNet. A callback needs to be passed.
-const classifier = ml5.imageClassifier('MobileNet');
+const image = document.getElementById('image'); // The image we want to classify
+const result = document.getElementById('result'); // The result tag in the HTML
+const probability = document.getElementById('probability'); // The probability tag in the HTML
 
-// A variable to hold the image we want to classify
-let img;
-
-function setup() {
-  noCanvas();
-  // Load the image
-  load_pic();
-  
-}
-
-// Change the status when the model loads.
-function modelReady(){
-  select('#status').html('Model Loaded')
-  
-}
+// Initialize the Image Classifier method with MobileNet
+ml5.imageClassifier('MobileNet')
+  .then(classifier => classifier.predict(image))
+  .then(results => {
+    result.innerText = results[0].className;
+    probability.innerText = results[0].probability.toFixed(4);
+});
 
 function load_pic(){
   fn = decodeURI(getQueryString("file"));
@@ -37,22 +34,7 @@ function load_pic(){
   img.size(400, 400);
 }
 
-// When the image has been loaded,
-// get a prediction for that image
-function imageReady() {
-  //classifier.predict(img, gotResult);
-  // You can also specify the amount of classes you want
-  classifier.predict(img.elt, 10, gotResult);
-}
 
-// A function to run when we get any errors and the results
-function gotResult(results) {
-  // Display error in the console
-
-  // The results are in an array ordered by probability.
-  select('#result').html(results[0].className);
-  select('#probability').html(nf(results[0].probability, 0, 2));
-}
 
 function getQueryString(paramName) {
             paramName = paramName.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]").toLowerCase();  
