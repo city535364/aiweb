@@ -20,8 +20,8 @@ function setup() {
   // Load the image
   var value=decodeURI(getQueryString("file"));
   //var value = window.AppInventor.getWebViewString(); 
-  //url = "https://firebasestorage.googleapis.com/v0/b/car-kthhjc.appspot.com/o/" + value + "?alt=media&token=f98a7fe6-a6d6-419a-8724-a2b5da6e68f3"
-  img = createImg(value, imageReady);
+  url = "https://firebasestorage.googleapis.com/v0/b/fileupload-40884.appspot.com/o/" + value + "?alt=media&token=decc6dbb-1ff8-4944-9b69-88465b65e92b"
+  img = createImg(url, imageReady);
   img.size(400, 400);
 }
 
